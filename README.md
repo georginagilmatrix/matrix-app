@@ -1,2 +1,2 @@
 # matrix-app
-Automation Framework for APP Matrix
+Repository for Automation Framework for APP Matrix

@@ -1,0 +1,158 @@
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: [ self-hosted ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: '1.8'
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+    # Clean Packages & Install Dependencies 
+    #- name: Clean Packages 
+    #  run: |
+    #    set "PATH=C:\Program Files\Git\bin;C:\Program Files (x86)\Android\android-sdk;%PATH%"
+    #    bash --version
+    #    bash.exe rm -rf node_modules
+    #    npm cache clean --force
+    #    bash.exe rm -rf package-lock.json
+    #  shell: cmd
+    #- name: Create Android directory
+    #  run: mkdir Android
+    - name: Download and Setup Android SDK
+      working-directory: ./Android
+      run: |
+        ##wget https://dl.google.com/android/repository/commandlinetools-win-8092744_latest.zip -O android-sdk.zip
+        ##unzip './Android/android-sdk.zip' './Android'
+        ##Expand-Archive -Path android-sdk.zip -DestinationPath ./latest
+        
+        #Expand-Archive -Path android-sdk.zip
+        #mv android-sdk/cmdline-tools android-sdk/latest
+        #mkdir sdk
+        #mkdir sdk/cmdline-tools
+        #mv android-sdk/latest sdk/cmdline-tools
+
+        Expand-Archive -Path sdk.zip
+
+        rm -r /root
+        mkdir -p /root/.android
+        ni /root/.android/repositories.cfg
+        echo $PWD
+        
+        #$env:PATH="C:\Program Files\Git\bin;$PWD/sdk/platform-tools/;$PWD/sdk/emulator/"
+        ###bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat --licenses"
+        ##bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'platforms;android-30'"
+        ##bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'platform-tools'"
+        ##bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'build-tools;31.0.0'"
+        ##bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat --update"
+        
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'system-images;android-23;google_apis;x86'"
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'platform-tools'"
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat 'build-tools;29.0.3'"
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat --update"
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat --licenses"
+
+        #bash.exe -c "No 'N' | ./sdk/cmdline-tools/latest/bin/avdmanager.bat create avd --force --name 'api-23' --abi 'google_apis/x86' --package 'system-images;android-23;google_apis;x86' --device 'Nexus 5X'"
+        
+        $env:ANDROID_HOME="$PWD/sdk"
+        $env:PATH="C:\Program Files\Git\bin;$PWD/sdk/platform-tools/;$PWD/sdk/tools/"
+     
+        echo "path: " $env:PATH
+        
+        echo "Lista emuladores"
+        emulator -list-avds
+        
+        #start-job {emulator -avd "api-23"}
+        #emulator -avd "api-23" -gpu swiftshader_indirect -no-window -no-snapshot -noaudio -no-boot-anim -camera-back none       
+        
+        #start-job {emulator -avd "api-23"}   
+        #start-job {adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 5; done; input keyevent 82'}
+        #start-job {adb shell settings put global window_animation_scale 0.0}
+        #start-job {adb shell settings put global transition_animation_scale 0.0}
+        #start-job {adb shell settings put global animator_duration_scale 0.0}
+        
+        #$env:ANDROID_HOME="$PWD/sdk"
+        ##$env:PATH="$PWD/sdk/cmdline-tools/platform-tools/"
+        ##chmod +x ./gradlew
+        ##set +o pipefail
+        #bash.exe -c "yes 'y' | ./sdk/cmdline-tools/latest/bin/sdkmanager.bat --licenses"
+        ##set -o pipefail
+        
+        #$env:PATH="C:\Program Files\Git\bin;$PWD/sdk/cmdline-tools/platform-tools/"
+        #echo "hola ---"
+        #echo "path: " $env:PATH
+        #echo $PWD
+        #cd ..
+        #cd bitrise
+        #bash.exe ./start_emulator.sh
+    - name: Run with api-23 emulator
+      run: |
+          set "PATH=C:\Program Files\Git\bin;%SystemRoot%\system32\WindowsPowerShell\v1.0;%cd%\Android\sdk\emulator;%cd%\Android\sdk\platform-tools;%PATH%"
+          echo "cd: " %cd%
+          echo "hola " %ANDROID_SDK_ROOT%
+          echo "path: " %path%
+          
+          bash --version
+          echo %PATH%
+          bash.exe ./scripts/RunAppiumServer.sh
+          start /B appium --log-level info
+          ./gradlew clean cucumber --info -PtagSelected=@SuccessfulSignUp -Denv=dev -DplatformName=android -DrunWith=emulator -Davd=api-23
+      shell: cmd
+    #start /B appium
+    #- name: Build with Gradle
+    #  run: ./gradlew clean cucumber -PtagSelected=@SuccessfulSignUp
+    - name: Upload Reports api-23
+      uses: actions/upload-artifact@v2
+      with:
+        name: cucumber-report-api-23
+        path: build/reports
+    - name: Run with Pixel_3a_API_30 emulator
+      run: |
+        set "PATH=C:\Program Files\Git\bin;%SystemRoot%\system32\WindowsPowerShell\v1.0;%cd%\Android\sdk\emulator;%cd%\Android\sdk\platform-tools;%PATH%"
+        echo "cd: " %cd%
+        echo "hola " %ANDROID_SDK_ROOT%
+        echo "path: " %path%
+        
+        bash --version
+        echo %PATH%
+        bash.exe ./scripts/RunAppiumServer.sh
+        start /B appium --log-level info
+        ./gradlew clean cucumber --info -PtagSelected=@SuccessfulSignUp -Denv=dev -DplatformName=android -DrunWith=emulator -Davd=Pixel_3a_API_30
+      shell: cmd
+    - name: Upload Reports Pixel_3a_API_30
+      uses: actions/upload-artifact@v2
+      with:
+        name: cucumber-report-Pixel_3a_API_30
+        path: build/reports
+    - name: Run with VisualStudio_android-25_x86_phone
+      run: |
+        set "PATH=C:\Program Files\Git\bin;%SystemRoot%\system32\WindowsPowerShell\v1.0;%cd%\Android\sdk\emulator;%cd%\Android\sdk\platform-tools;%PATH%"
+        echo "cd: " %cd%
+        echo "hola " %ANDROID_SDK_ROOT%
+        echo "path: " %path%
+        
+        bash --version
+        echo %PATH%
+        bash.exe ./scripts/RunAppiumServer.sh
+        start /B appium --log-level info
+        ./gradlew clean cucumber --info -PtagSelected=@SuccessfulSignUp -Denv=dev -DplatformName=android -DrunWith=emulator -Davd=VisualStudio_android-25_x86_phone
+      shell: cmd
+    - name: Upload Reports VisualStudio_android-25_x86_phone
+      uses: actions/upload-artifact@v2
+      with:
+        name: cucumber-report-VisualStudio_android-25_x86_phone
+        path: build/reports
