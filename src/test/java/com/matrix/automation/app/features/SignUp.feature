@@ -4,7 +4,7 @@ Feature: SignUp
   @SuccessfulSignUp
   Scenario: Successful Sign Up Flow Validation via App
   As an unregistered user I should be able to Sign Up on Matrix app
-  when I try to register my self
+  when I try to register myself
 
     Given I launch Matrix app as an unregistered user
     Then I see Landing screen
