@@ -48,7 +48,8 @@ public abstract class AbstractScreen<SCREEN extends AbstractScreen<?>> {
         PageFactory.initElements(new AppiumFieldDecorator(driver.context(ctx), Duration.ofSeconds(1)), this);
         LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>> AbstractScreen");
     }
-
+    
+    
     public void addScreenInterceptor(ScreenInterceptor screenInterceptor) {
         this.screenListeners.add(screenInterceptor);
     }

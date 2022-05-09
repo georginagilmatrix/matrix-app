@@ -1,6 +1,7 @@
 package com.matrix.automation.factory;
 
 import com.matrix.automation.screen.AbstractScreen;
+import com.matrix.automation.screen.SignUpScreen;
 import com.matrix.automation.screen.listener.EvidenceScreenInterceptor;
 import com.matrix.automation.screen.listener.ScreenInterceptor;
 import cucumber.api.Scenario;
@@ -30,24 +31,26 @@ public class BaseTest {
     private AbstractScreen<?> currentScreen = null;
     private String currentStep;
 
-    public BaseTest (AppiumDriver driver, Scenario scenario) {
+    public BaseTest (@SuppressWarnings("rawtypes") AppiumDriver driver, Scenario scenario) {
         this.driver = driver;
         this.scenario = scenario;
     }
 
-    public AppiumDriver getDriver() {
+    @SuppressWarnings("rawtypes")
+	public AppiumDriver getDriver() {
         return this.driver;
     }
 
     public void setAppiumDriverBuilder (AppiumDriverBuilder builder) {
         this.builder = builder;
     }
-
-    public <T extends AbstractScreen<?>> T getScreen(Class<T> clazz) {
+    
+    @SuppressWarnings("rawtypes")
+    public <T extends AbstractScreen> T getScreen(Class<T> class1) {
         try {
-            if (!screens.containsKey(clazz)) {
-                Constructor<T> constructor = clazz.getConstructor(AppiumDriver.class);
-                LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> Found constructor for class 2: {}", clazz);
+            if (!screens.containsKey(class1)) {
+                Constructor<T> constructor = class1.getConstructor(AppiumDriver.class);
+                LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> Found constructor for class 2: {}", class1);
                 Object instance = constructor.newInstance(this.driver);
                 AbstractScreen<?> abstractScreen = (AbstractScreen<?>) instance;
                 WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -58,14 +61,14 @@ public class BaseTest {
                 List<ScreenInterceptor> interceptors = builder.getScreenInterceptorList();
                 if (interceptors != null) {
                     for (ScreenInterceptor screenInterceptor : interceptors) {
-                        LOGGER.debug("Adding screem interceptor 2 {} to {}", screenInterceptor.getClass(), clazz);
+                        LOGGER.debug("Adding screem interceptor 2 {} to {}", screenInterceptor.getClass(), class1);
                         abstractScreen.setEvidenceScreenInterceptor((EvidenceScreenInterceptor) screenInterceptor);
                         abstractScreen.addScreenInterceptor(screenInterceptor);
                     }
                 }
 
-                LOGGER.info("Instance created class {}", clazz);
-                screens.put(clazz, abstractScreen);
+                LOGGER.info("Instance created class {}", class1);
+                screens.put(class1, abstractScreen);
                 //if (currentScreen != null && currentScreen instanceof FolioInfoFinancieraPage) {
                 //    currentScreen.resetStepName();
                 //}
@@ -73,7 +76,7 @@ public class BaseTest {
                 abstractScreen.setScenario(this.scenario);
                 LOGGER.debug("Instance setSteps {}", steps);
             }
-            currentScreen = screens.get(clazz);
+            currentScreen = screens.get(class1);
             LOGGER.debug("Instance currentScreen {}", currentScreen);
             currentStep = currentScreen.getStepName();
             LOGGER.info("Instance currentStep {}", currentStep);
@@ -81,13 +84,14 @@ public class BaseTest {
             /*if (customer != null && (customer.getSessionId() == null || customer.getSessionId().isEmpty()) ) {
                 customer.setSessionId(currentPage.getSessionId());
             }*/
-
-            return (T) screens.get(clazz);
+            
+            return (T) screens.get(class1);
         } catch (Exception e) {
             LOGGER.error("Creating page instance mmmmmmmmmmmmmmmmmmmmm", e);
             e.printStackTrace();
         }
-        throw new RuntimeException("Error creating page " + clazz.getSimpleName());
+        throw new RuntimeException("Error creating page " + class1.getSimpleName());
         //return null;
     }
+
 }

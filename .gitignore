@@ -17,6 +17,7 @@ gradle-app.setting
 .idea
 *.iml
 .classpath
+*.log
 /.project
 /.settings/*
 local.properties
