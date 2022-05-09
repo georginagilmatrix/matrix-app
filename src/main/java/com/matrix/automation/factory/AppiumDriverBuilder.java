@@ -40,6 +40,11 @@ public class AppiumDriverBuilder {
 			platform = APP_PROP.getString("platformName");
 		LOGGER.info("===>>> platform: {}", platform);
 
+		String appName = System.getProperty("app");
+		if (appName == null | appName.equals(""))
+			appName = APP_PROP.getString("applicationName");
+		LOGGER.info("===>>> appName: {}", appName);
+
 		String deviceName = System.getProperty("deviceName");
 		if (deviceName == null | deviceName.equals(""))
 			deviceName = APP_PROP.getString("deviceName");
@@ -69,7 +74,7 @@ public class AppiumDriverBuilder {
 			//capabilities.setCapability("noReset", true);
 			// o Forza a desinstalar la aplicacion
 			capabilities.setCapability("fullReset", true);
-			String appPath = new File("").getAbsolutePath() + APP_PROP.getString("applicationDir") + APP_PROP.getString("applicationName");
+			String appPath = new File("").getAbsolutePath() + APP_PROP.getString("applicationDir") + appName;
 			capabilities.setCapability("app", appPath);
 
 		if (platform.equalsIgnoreCase("Ios")) {
@@ -104,6 +109,11 @@ public class AppiumDriverBuilder {
 		if (platform == null | platform.equals(""))
 			platform = APP_PROP.getString("platformName");
 		LOGGER.info("===>>> platform: {}", platform);
+		
+		String appName = System.getProperty("app");
+		if (appName == null | appName.equals(""))
+			appName = APP_PROP.getString("applicationName");
+		LOGGER.info("===>>> appName: {}", appName);
 
 		String avd = System.getProperty("avd");
 		if (avd == null | avd.equals(""))
@@ -123,7 +133,7 @@ public class AppiumDriverBuilder {
 		//capabilities.setCapability("noReset", true);
 		// o Forza desinstalar la aplicacion
 		capabilities.setCapability("fullReset", true);
-		String appPath = new File("").getAbsolutePath() + APP_PROP.getString("applicationDir") + APP_PROP.getString("applicationName");
+		String appPath = new File("").getAbsolutePath() + APP_PROP.getString("applicationDir") + appName;
 		capabilities.setCapability("app", appPath);
 
 		if (platform.equalsIgnoreCase("Ios")) {

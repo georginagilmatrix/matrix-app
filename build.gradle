@@ -135,6 +135,7 @@ task cucumber() {
         javaexec {
             systemProperty 'env', System.getProperty('env')
             systemProperty 'platformName', System.getProperty('platformName')
+            systemProperty 'app', System.getProperty('app')
             systemProperty 'runWith', System.getProperty('runWith')
             systemProperty 'deviceName', System.getProperty('deviceName')
             systemProperty 'platformVersion', System.getProperty('platformVersion')
