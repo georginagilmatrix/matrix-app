@@ -2,7 +2,7 @@ package com.matrix.automation.factory;
 
 import com.matrix.automation.screen.listener.EvidenceScreenInterceptor;
 import com.matrix.automation.screen.listener.ScreenInterceptor;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
@@ -82,25 +82,22 @@ public class AppiumDriverBuilder {
 				driver = new IOSDriver(new URL(APP_PROP.getString("driverURL")), capabilities);
 			} catch (MalformedURLException e) {
 				LOGGER.info("===>>> Error al crear IOSDriver: {}", e.getMessage());
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		} else if (platform.equalsIgnoreCase("Android")) {
 			try {
 				driver = new AndroidDriver(new URL(APP_PROP.getString("driverURL")), capabilities);
 			} catch (MalformedURLException e) {
 				LOGGER.info("===>>> Error al crear AndroidDriver: {}", e.getMessage());
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		} else {
 			try {
 				throw new Exception("Unable to read device platform.");
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		}
-		//driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-		//BaseTest test = new BaseTest (driver, this, scenario);
-		//return new BaseTest (driver, scenario);
 		return new BaseTest (driver, scenario);
     }
 
@@ -141,25 +138,22 @@ public class AppiumDriverBuilder {
 				driver = new IOSDriver(new URL(APP_PROP.getString("driverURL")), capabilities);
 			} catch (MalformedURLException e) {
 				LOGGER.info("===>>> Error al crear IOSDriver: {}", e.getMessage());
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		} else if (platform.equalsIgnoreCase("Android")) {
 			try {
 				driver = new AndroidDriver(new URL(APP_PROP.getString("driverURL")), capabilities);
 			} catch (MalformedURLException e) {
 				LOGGER.info("===>>> Error al crear AndroidDriver: {}", e.getMessage());
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		} else {
 			try {
 				throw new Exception("Unable to read device platform.");
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(String.valueOf(e));
 			}
 		}
-		//driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-		//BaseTest test = new BaseTest (driver, this, scenario);
-		//return new BaseTest (driver, scenario);
 		return new BaseTest (driver, scenario);
 	}
 

@@ -1,4 +1,4 @@
-#language: en_US
+#language: en
 Feature: SignUp
 
   @SuccessfulSignUp

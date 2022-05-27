@@ -2,7 +2,7 @@ package com.matrix.automation.step;
 
 import com.matrix.automation.factory.AppiumDriverBuilder;
 import com.matrix.automation.factory.BaseTest;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +33,9 @@ public class BaseStep {
             }
         } catch (Exception e) {
             LOGGER.info("Error al abrir la aplicación xxxxxxxxxxxxxx: {}", e.getMessage());
-            e.printStackTrace();
+            LOGGER.error(String.valueOf(e));
         }
     }
-
 
     protected void tearDownTest(Scenario scenario) {
         if (test != null) {
@@ -44,7 +43,7 @@ public class BaseStep {
                 test.getDriver().quit();
             } catch (Exception e) {
                 LOGGER.info("Error al terminar el test: {}", e.getMessage());
-                e.printStackTrace();
+                LOGGER.error(String.valueOf(e));
                 if (test.getDriver()!=null)
                     test.getDriver().quit();
             }

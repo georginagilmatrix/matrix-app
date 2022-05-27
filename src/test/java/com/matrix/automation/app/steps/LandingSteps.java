@@ -3,9 +3,9 @@ package com.matrix.automation.app.steps;
 import com.matrix.automation.factory.AppiumDriverBuilder;
 import com.matrix.automation.screen.LandingScreen;
 import com.matrix.automation.step.BaseStep;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,6 @@ public class LandingSteps extends BaseStep {
         LOGGER.info("==>>> iLaunchMatrixAppAsAnUnregisteredUser, test1: {}", test);
         if (test==null) {
             try {
-                //test = AppiumDriverBuilder.runWithEmulator(scenario);
                 String runWith = System.getProperty("runWith");
                 if (runWith == null) {
                     runWith = "emulator";
@@ -35,7 +34,7 @@ public class LandingSteps extends BaseStep {
                 }
             } catch (Exception e) {
                 LOGGER.info("Error al abrir la aplicación : " + e.getMessage());
-                e.printStackTrace();
+                LOGGER.error(String.valueOf(e));
             }
         }
         LOGGER.info("==>>> iLaunchMatrixAppAsAnUnregisteredUser, test2: {}", test);

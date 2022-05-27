@@ -1,9 +1,9 @@
 package com.matrix.automation.app.steps;
 
 import com.matrix.automation.step.BaseStep;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

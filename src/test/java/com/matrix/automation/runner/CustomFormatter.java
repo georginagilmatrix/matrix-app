@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CustomFormatter implements Reporter {
+//public class CustomFormatter {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(CustomFormatter.class);
 
 	@Override
@@ -50,7 +51,7 @@ public class CustomFormatter implements Reporter {
 			ThreadLocalStepDefinitionMatch.set(stepMatch);
 			LOGGER.debug("<<<<>>>>  CustomFormatter, match {}", stepMatch.getStepName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(String.valueOf(e));
 		}
 	}
 

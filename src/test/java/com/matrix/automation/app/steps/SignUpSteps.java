@@ -2,8 +2,8 @@ package com.matrix.automation.app.steps;
 
 import com.matrix.automation.screen.SignUpScreen;
 import com.matrix.automation.step.BaseStep;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

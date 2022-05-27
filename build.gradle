@@ -7,15 +7,19 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'
 
-    implementation group: 'info.cukes', name: 'cucumber-java', version: '1.2.5'
-    implementation group: 'info.cukes', name: 'cucumber-core', version: '1.1.8'
-    implementation group: 'info.cukes', name: 'cucumber-jvm-deps', version: '1.0.5'
+    implementation group: 'info.cukes', name: 'gherkin', version: '2.12.2'
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '6.1.1'
+    implementation group: 'io.cucumber', name: 'cucumber-core', version: '6.1.1'
 
-    //implementation group: 'io.appium', name: 'java-client', version: '6.0.0-BETA5'
     implementation 'org.seleniumhq.selenium:selenium-java:3.9.2'
     implementation (group: 'io.appium', name: 'java-client', version: '7.0.0') {
         exclude group: 'com.google.code.gson', module: 'gson'
@@ -24,6 +28,9 @@ dependencies {
         exclude group: 'org.apache.ant', module: 'ant'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
         exclude group: 'org.springframework', module: 'spring-core'
+        exclude group: 'org.springframework', module: 'spring-beans'
+        exclude group: 'org.springframework', module: 'spring-expression'
+        exclude group: 'org.springframework', module: 'spring-context'
     }
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
@@ -32,10 +39,10 @@ dependencies {
         exclude group: 'commons-codec', module: 'commons-codec'
     }
     implementation group: 'org.springframework', name: 'spring-core', version: '5.3.14'
+    implementation group: 'org.springframework', name: 'spring-beans', version: '5.3.20'
+    implementation group: 'org.springframework', name: 'spring-expression', version: '5.3.17'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.19'
 
-    //implementation 'org.seleniumhq.selenium:selenium-java:4.1.2'
-
-    //implementation group: 'log4j', name: 'log4j', version: '1.2.17'
     testImplementation 'ch.qos.logback:logback-classic:1.2.11'
     implementation (group: 'net.masterthought', name: 'cucumber-reporting', version: '4.11.0') {
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
@@ -44,14 +51,10 @@ dependencies {
         exclude group: 'com.googlecode.owasp-java-html-sanitizer', module: 'owasp-java-html-sanitizer'
         exclude group: 'commons-io', module: 'commons-io'
     }
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.1'
     implementation 'org.apache.velocity:velocity-engine-core:2.3'
     implementation 'org.jsoup:jsoup:1.14.2'
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.2'
-    //implementation group: 'net.masterthought', name: 'cucumber-reporting', version: '4.2.3'
-    //implementation 'com.github.mkolisnyk:cucumber-runner:1.3.3'
-    //implementation 'com.github.mkolisnyk:cucumber-report-generator:1.3.3'
-    //implementation 'com.github.mkolisnyk:cucumber-reports:0.0.2'
     implementation ('com.github.mkolisnyk:cucumber-runner:1.3.5') {
         exclude group: 'batik', module: 'batik-dom'
         exclude group: 'batik', module: 'batik-svg-dom'
@@ -107,7 +110,6 @@ configurations {
     cucumberRuntime.extendsFrom testImplementation
 }
 
-
 task launcherJar(type: Jar) {
     dependsOn configurations.cucumberRuntime
     doFirst {
@@ -127,9 +129,8 @@ task launcherJar(type: Jar) {
     }
 }
 
-
 task cucumber() {
-    dependsOn assemble, testClasses, launcherJar
+    dependsOn assemble, testClasses
     doLast {
         println("build.gradle ==>> tagSelected: " + tagSelected)
         javaexec {
@@ -141,52 +142,25 @@ task cucumber() {
             systemProperty 'platformVersion', System.getProperty('platformVersion')
             systemProperty 'udid', System.getProperty('udid')
             systemProperty 'avd', System.getProperty('avd')
-            main = "com.matrix.automation.runner.CucumberRunner"
+            mainClass = "com.matrix.automation.runner.CucumberRunner"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = ['--monochrome',
                     '--plugin', 'pretty',
-                    '--plugin', 'html:build/reports/',
+                    '--plugin', 'html:build/reports/report.html',
                     '--plugin', 'json:build/reports/cucumber-report.json',
                     '--plugin', 'usage:build/reports/cucumber-usage-report.json',
                     '--plugin', 'pretty:build/reports/cucumber-pretty.txt',
-                    '--plugin', 'com.matrix.automation.runner.CustomFormatter',
-                    '--glue', 'com.matrix.automation.app',
-                    'src/test/java',
-                    '--tags', tagSelected]
+                    '--glue', 'com.matrix.automation.app.steps',
+                    'src/test/java/com/matrix/automation/app/features',
+                    '--tags', '@SuccessfulSignUp']
         }
     }
 }
+//'--plugin', 'com.matrix.automation.runner.CustomFormatter',
 
 build.dependsOn cucumber
 
 /////////////////
-
-/*
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-}
-
-task cucumberCli() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = [
-                    '--plugin', 'pretty',
-                    '--plugin', 'html:target/cucumber-report.html',
-                    '--glue', 'com.baeldung.cucumber',
-                    'src/test/resources']
-        }
-    }
-}
-
-
-build.dependsOn cucumberCli
-*/
-
 
 /*task writeClasspath() {
     doLast {
@@ -206,4 +180,3 @@ build.dependsOn cucumberCli
 /*configurations {
     cucumberRuntime.extendsFrom testRuntime
 }*/
-

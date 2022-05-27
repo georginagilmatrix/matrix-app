@@ -1,4 +1,4 @@
-#language: en_US
+#language: en
 Feature: Mail Register
   As an unregistered user I should be able to register my email
   when I enter an email

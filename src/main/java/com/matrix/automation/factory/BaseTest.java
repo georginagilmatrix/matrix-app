@@ -1,10 +1,9 @@
 package com.matrix.automation.factory;
 
 import com.matrix.automation.screen.AbstractScreen;
-import com.matrix.automation.screen.SignUpScreen;
 import com.matrix.automation.screen.listener.EvidenceScreenInterceptor;
 import com.matrix.automation.screen.listener.ScreenInterceptor;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.support.PageFactory;
@@ -66,12 +65,8 @@ public class BaseTest {
                         abstractScreen.addScreenInterceptor(screenInterceptor);
                     }
                 }
-
                 LOGGER.info("Instance created class {}", class1);
                 screens.put(class1, abstractScreen);
-                //if (currentScreen != null && currentScreen instanceof FolioInfoFinancieraPage) {
-                //    currentScreen.resetStepName();
-                //}
                 abstractScreen.setSteps(steps);
                 abstractScreen.setScenario(this.scenario);
                 LOGGER.debug("Instance setSteps {}", steps);
@@ -80,18 +75,10 @@ public class BaseTest {
             LOGGER.debug("Instance currentScreen {}", currentScreen);
             currentStep = currentScreen.getStepName();
             LOGGER.info("Instance currentStep {}", currentStep);
-
-            /*if (customer != null && (customer.getSessionId() == null || customer.getSessionId().isEmpty()) ) {
-                customer.setSessionId(currentPage.getSessionId());
-            }*/
-            
             return (T) screens.get(class1);
         } catch (Exception e) {
-            LOGGER.error("Creating page instance mmmmmmmmmmmmmmmmmmmmm", e);
-            e.printStackTrace();
+            LOGGER.error("Creating page instance ", e);
         }
         throw new RuntimeException("Error creating page " + class1.getSimpleName());
-        //return null;
     }
-
 }
